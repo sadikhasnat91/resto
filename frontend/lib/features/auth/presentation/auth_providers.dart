@@ -56,7 +56,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   // --- Login ---
   Future<bool> login(String email, String password) async {
-    state = state.copyWith(status: AuthStatus.initial);
+    state = state.copyWith(errorMessage: null);
     try {
       final response = await _dio.post(
         '/api/auth/login',
@@ -82,7 +82,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   // --- Register ---
   Future<bool> register(String email, String password, String name, String restaurantName) async {
-    state = state.copyWith(status: AuthStatus.initial);
+    state = state.copyWith(errorMessage: null);
     try {
       final response = await _dio.post(
         '/api/auth/register',

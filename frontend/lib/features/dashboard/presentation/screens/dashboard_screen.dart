@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/widgets/design_system.dart';
 import '../../../../core/theme/theme.dart';
+import '../../../auth/presentation/auth_providers.dart';
 import '../dashboard_providers.dart';
 
 class DashboardScreen extends ConsumerWidget {
@@ -30,12 +31,12 @@ class DashboardScreen extends ConsumerWidget {
   }
 }
 
-class _DashboardContent extends StatelessWidget {
+class _DashboardContent extends ConsumerWidget {
   final Map<String, dynamic> dash;
   const _DashboardContent({required this.dash});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final kpi = dash['kpi'] as Map<String, dynamic>? ?? {};
     final salesChart = (dash['sales_chart'] as List?)?.cast<Map<String, dynamic>>() ?? [];
     final topItems = (dash['top_items'] as List?)?.cast<Map<String, dynamic>>() ?? [];
@@ -60,6 +61,9 @@ class _DashboardContent extends StatelessWidget {
 
           // KPI Cards
           LayoutBuilder(builder: (ctx, constraints) {
+            final authState = ref.watch(authProvider);
+            final isFinancialAuthorized = authState.isFinancialAuthorized;
+
             final crossCount = constraints.maxWidth > 900 ? 5 : (constraints.maxWidth > 600 ? 3 : 2);
             return GridView.count(
               crossAxisCount: crossCount,
@@ -67,11 +71,11 @@ class _DashboardContent extends StatelessWidget {
               shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
               childAspectRatio: 1.6,
               children: [
-                _KpiCard('Today\'s Sales', currency.format(kpi['today_sales'] ?? 0), Icons.attach_money, const Color(0xFF10B981)),
+                _KpiCard('Today\'s Sales', isFinancialAuthorized ? currency.format(kpi['today_sales'] ?? 0) : '••••••', Icons.attach_money, const Color(0xFF10B981)),
                 _KpiCard('Orders Today', '${kpi['orders_count'] ?? 0}', Icons.receipt_long, const Color(0xFF3B82F6)),
-                _KpiCard('Avg Order Value', currency.format(kpi['avg_order_value'] ?? 0), Icons.show_chart, AppTheme.primaryGold),
-                _KpiCard('Expenses', currency.format(kpi['today_expenses'] ?? 0), Icons.money_off, const Color(0xFFEF4444)),
-                _KpiCard('Net Revenue', currency.format(kpi['net_revenue'] ?? 0), Icons.trending_up, const Color(0xFF8B5CF6)),
+                _KpiCard('Avg Order Value', isFinancialAuthorized ? currency.format(kpi['avg_order_value'] ?? 0) : '••••••', Icons.show_chart, AppTheme.primaryGold),
+                _KpiCard('Expenses', isFinancialAuthorized ? currency.format(kpi['today_expenses'] ?? 0) : '••••••', Icons.money_off, const Color(0xFFEF4444)),
+                _KpiCard('Net Revenue', isFinancialAuthorized ? currency.format(kpi['net_revenue'] ?? 0) : '••••••', Icons.trending_up, const Color(0xFF8B5CF6)),
               ],
             );
           }),

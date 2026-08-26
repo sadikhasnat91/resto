@@ -24,6 +24,9 @@ class NavigationShell extends ConsumerWidget {
     final restaurantName = authState.restaurant?['name'] ?? 'RestroFlow';
     final userName = authState.user?['full_name'] ?? 'User';
 
+    // Determine user authorization
+    final isAuthorizedFinancial = authState.isFinancialAuthorized;
+
     // Navigation Items Definition
     final navItems = [
       _NavItem('Dashboard', '/dashboard', Icons.dashboard),
@@ -33,9 +36,9 @@ class NavigationShell extends ConsumerWidget {
       _NavItem('Tables Floor', '/tables', Icons.table_restaurant),
       _NavItem('Menu Items', '/menu', Icons.restaurant_menu),
       _NavItem('Inventory', '/inventory', Icons.inventory),
-      _NavItem('Staff RBAC', '/employees', Icons.people),
-      _NavItem('Expenses', '/expenses', Icons.money_off),
-      _NavItem('Reports', '/reports', Icons.bar_chart),
+      if (isAuthorizedFinancial) _NavItem('Staff RBAC', '/employees', Icons.people),
+      if (isAuthorizedFinancial) _NavItem('Expenses', '/expenses', Icons.money_off),
+      if (isAuthorizedFinancial) _NavItem('Reports', '/reports', Icons.bar_chart),
       _NavItem('Settings', '/settings', Icons.settings),
     ];
 

@@ -37,6 +37,26 @@ class AuthState {
         this.restaurant = restaurant,
         errorMessage = null;
 
+  List<String> get roles {
+    if (user == null) return [];
+    if (user!['roles'] is List) {
+      return (user!['roles'] as List).map((r) => r.toString()).toList();
+    }
+    if (user!['role'] is String) {
+      return (user!['role'] as String)
+          .split(',')
+          .map((r) => r.trim())
+          .where((r) => r.isNotEmpty)
+          .toList();
+    }
+    return [];
+  }
+
+  bool get isFinancialAuthorized {
+    final userRoles = roles;
+    return userRoles.isEmpty || userRoles.contains('Owner') || userRoles.contains('Manager');
+  }
+
   AuthState copyWith({
     AuthStatus? status,
     Map<String, dynamic>? user,
